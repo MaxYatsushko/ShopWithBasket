@@ -18,9 +18,15 @@ public class OrderServiceImpl implements OrderService {
 
     public List<Order> add(List<Integer> ids){
 
-        List<Order> newOrders = ids.stream()
-                .map(id -> new Order(id))
-                .collect(Collectors.toList());
+        List<Order> newOrders = new ArrayList<>();
+
+        for (Integer id : ids) {
+           if (isId(id))
+               continue;
+
+           Order newOrder = new Order(id);
+           newOrders.add(newOrder);
+        }
 
         orders.addAll(newOrders);
         return newOrders;
@@ -28,5 +34,13 @@ public class OrderServiceImpl implements OrderService {
 
     public List<Order> getAll(){
         return orders;
+    }
+
+    private boolean isId(Integer id){
+        for (Order order: orders) {
+            if(id.equals(order.getId()))
+                return true;
+        }
+        return false;
     }
 }
