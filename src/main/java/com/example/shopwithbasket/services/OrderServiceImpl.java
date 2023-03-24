@@ -1,22 +1,57 @@
 package com.example.shopwithbasket.services;
 
+import com.example.shopwithbasket.entities.Basket;
 import com.example.shopwithbasket.entities.Order;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Scope(WebApplicationContext.SCOPE_SESSION)
 public class OrderServiceImpl implements OrderService {
 
-    private List<Order> orders = new ArrayList<>();
+    private final Basket basket;
 
+    public OrderServiceImpl(Basket basket) {
+        this.basket = basket;
+    }
+
+    public List<Order> getAll() {
+        return basket.getAll();
+    }
 
     public List<Order> add(List<Integer> ids){
+
+        List<Order> newOrders = new ArrayList<>();
+
+        for (Integer id : ids) {
+            if (isId(id))
+                continue;
+
+            Order newOrder = new Order(id);
+            newOrders.add(newOrder);
+        }
+
+        basket.add(newOrders);
+        return newOrders;
+    }
+
+    private boolean isId(Integer id){
+        for (Order order: basket.getAll()) {
+            if(id.equals(order.getId()))
+                return true;
+        }
+        return false;
+    }
+
+   /* private List<Order> orders = new ArrayList<>();
+
+    public List<Order> add(List<Integer> ids){
+
+        //пример без фильтрации уникальных для себя
+        //List<Order> newOrders = ids.stream()
+        //        .map(id -> new Order(id))
+        //        .collect(Collectors.toList());
 
         List<Order> newOrders = new ArrayList<>();
 
@@ -42,5 +77,5 @@ public class OrderServiceImpl implements OrderService {
                 return true;
         }
         return false;
-    }
+    }*/
 }
